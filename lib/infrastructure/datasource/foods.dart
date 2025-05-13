@@ -7,7 +7,7 @@ class Foods {
       id: 1,
       imgPath: 'assets/plate1.png',
       foodName: 'Salmon bowl',
-      price: '\$24.00',
+      price: 24.00,
       infoCards: [
         InfoCard(carType.WEIGHT, '300', 'G'),
         InfoCard(carType.CALORIES, '367', 'CAL'),
@@ -19,7 +19,7 @@ class Foods {
       id: 2,
       imgPath: 'assets/plate2.png',
       foodName: 'Spring bowl',
-      price: '\$22.00',
+      price: 22.00,
       infoCards: [
         InfoCard(carType.WEIGHT, '250', 'G'),
         InfoCard(carType.CALORIES, '300', 'CAL'),
@@ -31,7 +31,7 @@ class Foods {
       id: 3,
       imgPath: 'assets/plate6.png',
       foodName: 'Avocado bowl',
-      price: '\$26.00',
+      price: 26.00,
       infoCards: [
         InfoCard(carType.WEIGHT, '250', 'G'),
         InfoCard(carType.CALORIES, '300', 'CAL'),
@@ -43,7 +43,7 @@ class Foods {
       id: 4,
       imgPath: 'assets/plate5.png',
       foodName: 'Berry bowl',
-      price: '\$24.00',
+      price: 24.00,
       infoCards: [
         InfoCard(carType.WEIGHT, '300', 'G'),
         InfoCard(carType.CALORIES, '367', 'CAL'),

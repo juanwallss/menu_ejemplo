@@ -6,7 +6,9 @@ import 'package:example_menu/presentations/widgets/custom_text.dart';
 import 'package:example_menu/presentations/widgets/header.dart';
 import 'package:example_menu/presentations/widgets/tamplate_screens.dart';
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
+import 'package:example_menu/presentations/provider/cart_provider.dart';
 
 /// Pantalla que muestra los detalles de un alimento.
 class DetailFood extends StatefulWidget {
@@ -52,7 +54,7 @@ class _DetailFoodState extends State<DetailFood> with Header, CustomText {
     final foodNameParts = widget.food.foodName.split(' ');
     firstName = foodNameParts[0];
     secondName = foodNameParts.length > 1 ? foodNameParts[1] : '';
-    price = double.parse(widget.food.price.replaceAll('\$', '').trim());
+    price = widget.food.price;
   }
 
   @override
@@ -150,7 +152,7 @@ class _DetailFoodState extends State<DetailFood> with Header, CustomText {
           const SizedBox(height: 20.0),
           _buildInfoCards(),
           const SizedBox(height: 20.0),
-          _buildTotalPrice(pricesForQuantity),
+          _buildTotalPrice(pricesForQuantity, context),
         ],
       ),
     );
@@ -173,7 +175,7 @@ class _DetailFoodState extends State<DetailFood> with Header, CustomText {
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
         getBodyText(
-          text: widget.food.price,
+          text: "\$${widget.food.price.toString()}",
           fontSize: 20,
           colorText: Colors.grey,
         ),
@@ -245,36 +247,70 @@ class _DetailFoodState extends State<DetailFood> with Header, CustomText {
       height: 260.0,
       child: ListView.builder(
         scrollDirection: Axis.horizontal,
-        itemCount: widget.food.infoCards.length,
+        itemCount: widget.food.infoCards?.length,
         itemBuilder: (context, index) {
           return Padding(
             padding: const EdgeInsets.only(right: 10.0),
-            child: BuildInfoCard(infoCard: widget.food.infoCards[index]),
+            child: BuildInfoCard(infoCard: widget.food.infoCards![index]),
           );
         },
       ),
     );
   }
 
-  /// Construye la sección que muestra el precio total.
-  Widget _buildTotalPrice(PricesForQuantity pricesForQuantity) {
+  /// Construye la sección que muestra el precio total y el botón para agregar al carrito.
+  Widget _buildTotalPrice(
+    PricesForQuantity pricesForQuantity,
+    BuildContext context,
+  ) {
+    var size = MediaQuery.of(context).size;
     return Padding(
       padding: const EdgeInsets.only(bottom: 5.0),
-      child: Container(
-        decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(25.0),
-          color: Colors.black,
-        ),
-        height: 60.0,
-        child: Center(
-          child: Text(
-            '\$${pricesForQuantity.getTotalPrice().toStringAsFixed(2)}',
-            style: const TextStyle(
-              color: Colors.white,
-              fontFamily: 'Montserrat',
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          Container(
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(25.0),
+              color: Colors.black,
+            ),
+            height: 60.0,
+            width: size.width * 0.5,
+            child: Center(
+              child: Text(
+                '\$${pricesForQuantity.getTotalPrice().toStringAsFixed(2)}',
+                style: const TextStyle(
+                  color: Colors.white,
+                  fontFamily: 'Montserrat',
+                ),
+              ),
             ),
           ),
+          _buildAddToCartButton(context, pricesForQuantity),
+        ],
+      ),
+    );
+  }
+
+  ElevatedButton _buildAddToCartButton(
+    BuildContext context,
+    PricesForQuantity pricesForQuantity,
+  ) {
+    return ElevatedButton(
+      onPressed: () {
+        final cartProvider = context.read<CartProvider>();
+        cartProvider.addManyToCart(widget.food, pricesForQuantity.quantity);
+        context.pop();
+      },
+      style: ElevatedButton.styleFrom(
+        backgroundColor: const Color(0xFF7A9BEE),
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(25.0),
         ),
+      ),
+      child: const Text(
+        'Agregar al carrito',
+        style: TextStyle(color: Colors.white, fontFamily: 'Montserrat'),
       ),
     );
   }

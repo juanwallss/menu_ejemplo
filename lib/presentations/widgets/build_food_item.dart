@@ -1,7 +1,9 @@
 import 'package:example_menu/domain/models/food.dart';
+import 'package:example_menu/presentations/provider/cart_provider.dart';
 import 'package:example_menu/presentations/widgets/food_text.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:provider/provider.dart';
 
 class BuildFoodItem extends StatelessWidget with FoodText {
   final Food food;
@@ -9,9 +11,9 @@ class BuildFoodItem extends StatelessWidget with FoodText {
 
   @override
   Widget build(BuildContext context) {
+    final cartProvider = Provider.of<CartProvider>(context);
     return InkWell(
       onTap: () {
-        print('el click de la imagen de comida ${food.id}');
         context.push('/detail/${food.id}');
       },
       child: Padding(
@@ -25,8 +27,8 @@ class BuildFoodItem extends StatelessWidget with FoodText {
                 child: Image(
                   image: AssetImage(food.imgPath),
                   fit: BoxFit.cover,
-                  width: 75.0,
-                  height: 75.0,
+                  width: 80.0,
+                  height: 80.0,
                 ),
               ),
               SizedBox(width: 20.0),
@@ -34,7 +36,9 @@ class BuildFoodItem extends StatelessWidget with FoodText {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [getFoodName(), SizedBox(height: 5.0), getPrice()],
               ),
-              IconButton(onPressed: () {}, icon: Icon(Icons.add)),
+              IconButton(onPressed: () {
+                cartProvider.addToCart(food);
+              }, icon: Icon(Icons.add)),
             ],
           ),
         ),
@@ -47,6 +51,6 @@ class BuildFoodItem extends StatelessWidget with FoodText {
   }
 
   Widget getPrice() {
-    return getFoodText(food.price, fontSize: 15, colorText: Colors.grey);
+    return getFoodText("\$${food.price.toString()}", fontSize: 15, colorText: Colors.grey);
   }
 }
